@@ -115,8 +115,10 @@ add_library (glew SHARED ${GLEW_PUBLIC_HEADERS_FILES} ${GLEW_SRC_FILES})
 set_target_properties (glew PROPERTIES COMPILE_DEFINITIONS "GLEW_BUILD" OUTPUT_NAME "${GLEW_LIB_NAME}" PREFIX "${DLL_PREFIX}"
                                        VERSION ${GLEW_VERSION}
                                        SOVERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR})
+target_include_directories (glew PUBLIC ${GLEW_DIR}/include)
 add_library (glew_s STATIC ${GLEW_PUBLIC_HEADERS_FILES} ${GLEW_SRC_FILES})
 set_target_properties (glew_s PROPERTIES COMPILE_DEFINITIONS "GLEW_STATIC" OUTPUT_NAME "${GLEW_LIB_NAME}" PREFIX lib)
+target_include_directories (glew_s PUBLIC ${GLEW_DIR}/include)
 
 if (MSVC)
   # add options from visual studio project
@@ -162,20 +164,20 @@ foreach(t glew glew_s)
   target_include_directories(${t} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 endforeach()
 
-set(targets_to_install "")
-if(BUILD_SHARED_LIBS)
-  list(APPEND targets_to_install glew)
-else ()
-  list(APPEND targets_to_install glew_s)
-endif()
+# set(targets_to_install "")
+# if(BUILD_SHARED_LIBS)
+#   list(APPEND targets_to_install glew)
+# else ()
+#   list(APPEND targets_to_install glew_s)
+# endif()
 
-install ( TARGETS ${targets_to_install}
-          EXPORT glew-targets
-          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
-          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
-          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
-          FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Runtime
-)
+# install ( TARGETS ${targets_to_install}
+#           EXPORT glew-targets
+#           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+#           LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+#           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+#           FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Runtime
+# )
 
 if (BUILD_UTILS)
   set (GLEWINFO_SRC_FILES ${GLEW_DIR}/src/glewinfo.c)
@@ -206,9 +208,9 @@ if (BUILD_UTILS)
     target_link_libraries(visualinfo ${X11_LIBRARIES})
   endif ()
 
-  install ( TARGETS glewinfo visualinfo
-            DESTINATION ${CMAKE_INSTALL_BINDIR}
-            COMPONENT Runtime)
+  # install ( TARGETS glewinfo visualinfo
+  #           DESTINATION ${CMAKE_INSTALL_BINDIR}
+  #           COMPONENT Runtime)
 endif ()
 
 set (prefix ${CMAKE_INSTALL_PREFIX})
@@ -227,41 +229,41 @@ endif ()
 
 configure_file (${GLEW_DIR}/glew.pc.in ${CMAKE_CURRENT_BINARY_DIR}/glew.pc @ONLY)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glew.pc
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-        COMPONENT Development
-)
+# install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glew.pc
+#         DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+#         COMPONENT Development
+# )
 
-if(WIN32 AND MSVC AND (NOT MSVC_VERSION LESS 1600))
-    install(
-        FILES $<TARGET_PDB_FILE:glew>
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        CONFIGURATIONS Debug RelWithDebInfo
-        COMPONENT Runtime
-    )
-endif()
+# if(WIN32 AND MSVC AND (NOT MSVC_VERSION LESS 1600))
+#     install(
+#         FILES $<TARGET_PDB_FILE:glew>
+#         DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#         CONFIGURATIONS Debug RelWithDebInfo
+#         COMPONENT Runtime
+#     )
+# endif()
 
-install (
-    FILES ${GLEW_PUBLIC_HEADERS_FILES}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GL
-    COMPONENT Development)
+# install (
+#     FILES ${GLEW_PUBLIC_HEADERS_FILES}
+#     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GL
+#     COMPONENT Development)
 
-install(EXPORT glew-targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/glew
-  COMPONENT Development
-  NAMESPACE GLEW::)
-install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/glew-config.cmake
-    ${CMAKE_CURRENT_SOURCE_DIR}/CopyImportedTargetProperties.cmake
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/glew
-  COMPONENT Development)
+# install(EXPORT glew-targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/glew
+#   COMPONENT Development
+#   NAMESPACE GLEW::)
+# install(FILES
+#     ${CMAKE_CURRENT_SOURCE_DIR}/glew-config.cmake
+#     ${CMAKE_CURRENT_SOURCE_DIR}/CopyImportedTargetProperties.cmake
+#   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/glew
+#   COMPONENT Development)
 
-if(NOT TARGET uninstall)
-  configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
-      IMMEDIATE @ONLY)
+# if(NOT TARGET uninstall)
+#   configure_file(
+#       ${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in
+#       ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+#       IMMEDIATE @ONLY)
 
-  add_custom_target(uninstall
-      COMMAND ${CMAKE_COMMAND} -P
-      ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-endif()
+#   add_custom_target(uninstall
+#       COMMAND ${CMAKE_COMMAND} -P
+#       ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+# endif()
