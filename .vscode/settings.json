@@ -1,0 +1,3 @@
+{
+    "cmake.configureArgs": ["-DCMAKE_INSTALL_PREFIX=C:/Users/luzms/OneDrive/Desktop/glew"]
+}
